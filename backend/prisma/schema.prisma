@@ -1,0 +1,103 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Resume {
+  id                                String   @id @default(cuid())
+  clerkUserId                       String
+  originalFilename                  String
+  mimeType                          String
+  fileSize                          Int
+  extractedText                     String   @db.Text
+  analysisJson                      Json?
+  careerRecommendationsJson         Json?
+  careerRecommendationsAnalysisHash String?
+  skillGapAnalysisJson              Json?
+  createdAt                         DateTime @default(now())
+  updatedAt                         DateTime @updatedAt
+
+  @@index([clerkUserId])
+}
+
+enum InterviewDifficulty {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum InterviewSessionStatus {
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum InterviewQuestionSource {
+  GEMINI
+  LOCAL
+  LOCAL_FALLBACK
+}
+
+enum FacialExpression {
+  angry
+  disgust
+  fear
+  happy
+  neutral
+  sad
+  surprise
+}
+
+model InterviewSession {
+  id                    String                  @id @default(cuid())
+  clerkUserId           String
+  selectedRole          String
+  technology            String
+  difficulty            InterviewDifficulty
+  questionSource        InterviewQuestionSource @default(LOCAL)
+  status                InterviewSessionStatus  @default(IN_PROGRESS)
+  currentQuestionIndex  Int                     @default(0)
+  startedAt             DateTime                @default(now())
+  completedAt           DateTime?
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime                @updatedAt
+  answers               InterviewAnswer[]
+  emotions              InterviewEmotion[]
+
+  @@index([clerkUserId, createdAt])
+}
+
+model InterviewEmotion {
+  id            String             @id @default(cuid())
+  sessionId     String
+  timestamp     DateTime           @default(now())
+  emotion       FacialExpression
+  confidence    Float?
+  questionIndex Int?
+  session       InterviewSession   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId, timestamp])
+  @@index([sessionId, questionIndex])
+}
+
+model InterviewAnswer {
+  id                String           @id @default(cuid())
+  sessionId         String
+  questionIndex     Int
+  questionText      String           @db.Text
+  referenceAnswer   String           @db.Text
+  transcriptAnswer  String?          @db.Text
+  feedback          String?          @db.Text
+  rating            Float?
+  evaluation        Json?
+  submittedAt       DateTime?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  session           InterviewSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@unique([sessionId, questionIndex])
+  @@index([sessionId, questionIndex])
+}

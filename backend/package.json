@@ -1,0 +1,27 @@
+{
+  "name": "ai-career-assistant-backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:check": "node scripts/check-db.mjs"
+  },
+  "dependencies": {
+    "@clerk/backend": "^3.22.0",
+    "@google/generative-ai": "^0.24.1",
+    "@prisma/client": "^6.19.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.21.2",
+    "mammoth": "^1.13.0",
+    "multer": "^2.4.0",
+    "pdf-parse": "^2.4.5"
+  },
+  "devDependencies": {
+    "prisma": "^6.19.0"
+  }
+}

@@ -1,0 +1,4 @@
+Flask>=3.0,<4
+numpy>=1.21
+opencv-python>=4.7
+tensorflow>=2.12

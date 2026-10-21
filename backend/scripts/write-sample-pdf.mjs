@@ -1,0 +1,32 @@
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const dir = path.dirname(fileURLToPath(import.meta.url));
+
+const pdf = `%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 300 144] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 55 >>
+stream
+BT /F1 18 Tf 24 72 Td (Jane Doe Software Engineer) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+trailer
+<< /Root 1 0 R >>
+%%EOF
+`;
+
+fs.writeFileSync(path.join(dir, 'sample-resume.pdf'), pdf, 'utf8');
+console.log('wrote sample-resume.pdf');
